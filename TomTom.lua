@@ -18,6 +18,8 @@ TomTom.point_title = nil
 TomTom.isHide = false
 TomTom.wayframe = nil
 TomTom.waypoints = {}
+TomTom.arrowTab = {}
+TomTom.feedTab = {}
 -- List of zones Astrolabe doesn't know about.
 -- the left part is your name without any extra chars (like space, ' or -) in lower case
 -- the right part is the Astrolabe zone name. Look it up from Interface/Addons/TomTom/Astrolabe/Astrolabe.lua
@@ -243,7 +245,17 @@ function TomTom:CreateFrames()
 			local gr,gg,gb = 1, 1, 1
 			local mr,mg,mb = 0.75, 0.75, 0.75
 			local br,bg,bb = 0.5, 0.5, 0.5
-			local tablee = {};
+			local tablee = TomTom.feedTab
+			tablee[1] = nil;
+			tablee[2] = nil;
+			tablee[3] = nil;
+			tablee[4] = nil;
+			tablee[5] = nil;
+			tablee[6] = nil;
+			tablee[7] = nil;
+			tablee[8] = nil;
+			tablee[9] = nil;
+			table.setn(tablee,0)
 			table.insert(tablee, gr)
 			table.insert(tablee, gg)
 			table.insert(tablee, gb)
@@ -414,7 +426,17 @@ function TomTom:OnUpdate()
 		local gr,gg,gb = 1, 1, 1
 		local mr,mg,mb = 0.75, 0.75, 0.75
 		local br,bg,bb = 0.5, 0.5, 0.5
-		local tablee = {};
+		local tablee = TomTom.arrowTab
+		tablee[1] = nil;
+		tablee[2] = nil;
+		tablee[3] = nil;
+		tablee[4] = nil;
+		tablee[5] = nil;
+		tablee[6] = nil;
+		tablee[7] = nil;
+		tablee[8] = nil;
+		tablee[9] = nil;
+		table.setn(tablee,0)
 		table.insert(tablee, gr)
 		table.insert(tablee, gg)
 		table.insert(tablee, gb)
@@ -566,12 +588,12 @@ local world_click_verify = {
 }
 
 local origScript = WorldMapButton_OnClick
-WorldMapButton_OnClick = function(...)
+WorldMapButton_OnClick = function(arg1, arg2, arg3)
     if WorldMapButton.ignoreClick then
         WorldMapButton.ignoreClick = false;
         return;
     end
-    local mouseButton = unpack(arg)
+    local mouseButton = arg1
     if mouseButton == "RightButton" then
         -- Check for all the modifiers that are currently set
         local notSet = false
@@ -581,7 +603,7 @@ WorldMapButton_OnClick = function(...)
             end
         end)
         if notSet then
-        	return origScript and origScript(unpack(arg)) or true
+        	return origScript and origScript(arg1, arg2, arg3) or true
         end
 		local z = GetCurrentMapZone()
 		local c = GetCurrentMapContinent()
@@ -627,12 +649,12 @@ WorldMapButton_OnClick = function(...)
         end
 
         if c < 1 or z < 1 then
-            return origScript and origScript(unpack(arg)) or true
+            return origScript and origScript(arg1,arg2,arg3) or true
         end
 
         local uid = TomTom:AddMFWaypoint(c,z,x,y)
     else
-        return origScript and origScript(unpack(arg)) or true
+        return origScript and origScript(arg1,arg2,arg3) or true
     end
 end
 
@@ -1251,9 +1273,10 @@ end
 
 function TomTom:OnProfileEnable()
     -- This handles the reloading of all options
-    self.profile = self.db.profile
-    if self.profile.arrow.location ~= nil then
-		self.wayframe:SetPoint(unpack(self.profile.arrow.location))
+  self.profile = self.db.profile
+  if self.profile.arrow.location ~= nil then
+		local point, parent, relative, offx, offy = self.profile.arrow.location[1], self.profile.arrow.location[2], self.profile.arrow.location[3], self.profile.arrow.location[4], self.profile.arrow.location[5]
+		self.wayframe:SetPoint(point, parent, relative, offx, offy)
 	else
 		self.wayframe:SetPoint("CENTER", UIParent, "CENTER")
 	end

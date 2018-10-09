@@ -279,12 +279,16 @@ function Astrolabe:PlaceIconOnMinimap( icon, continent, zone, xPos, yPos )
 	self:argCheck(yPos, 6, "number");
 	--DEFAULT_CHAT_FRAME:AddMessage("ARGCHECK passed");
 
-	local lC, lZ, lx, ly = unpack(self.LastPlayerPosition);
+	local lC, lZ, lx, ly = self.LastPlayerPosition[1], self.LastPlayerPosition[2], self.LastPlayerPosition[3], self.LastPlayerPosition[4];
 	--DEFAULT_CHAT_FRAME:AddMessage("lC " .. lC .. " " .. lZ .. " " .. lx .. " " .. ly);
 	if (not lC) or (not lZ) or (not lx) or (not ly) then
-	  self.LastPlayerPosition = {};
+	  self.LastPlayerPosition[1] = nil;
+	  self.LastPlayerPosition[2] = nil;
+	  self.LastPlayerPosition[3] = nil;
+	  self.LastPlayerPosition[4] = nil;
+	  table.setn(self.LastPlayerPosition,0);
 	  self.LastPlayerPosition[1], self.LastPlayerPosition[2], self.LastPlayerPosition[3], self.LastPlayerPosition[4] = Astrolabe:GetCurrentPlayerPosition();
-	  lC, lZ, lx, ly = unpack(self.LastPlayerPosition);
+	  lC, lZ, lx, ly = self.LastPlayerPosition[1], self.LastPlayerPosition[2], self.LastPlayerPosition[3], self.LastPlayerPosition[4];
 	end
 	local dist, xDist, yDist = self:ComputeDistance(lC, lZ, lx, ly, continent, zone, xPos, yPos);
 	if not ( dist ) then
@@ -390,7 +394,7 @@ function Astrolabe:UpdateMinimapIconPositions()
 	end
 	local Minimap = Minimap;
 	local lastPosition = self.LastPlayerPosition;
-	local lC, lZ, lx, ly = unpack(lastPosition);
+	local lC, lZ, lx, ly = lastPosition[1], lastPosition[2], lastPosition[3], lastPosition[4];
 	local currentZoom = Minimap:GetZoom();
 	local zoomChanged = lastZoom ~= Minimap:GetZoom()
 	lastZoom = currentZoom;
